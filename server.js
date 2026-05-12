@@ -13,9 +13,16 @@ const { notFound, errorHandler } = require("./middleware/errorHandler");
 connectDB();
 
 const app = express();
+app.set("trust proxy", 1);
 
 // Enable CORS + JSON body parsing for all API routes.
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // Quick health endpoint to confirm server status.
