@@ -19,7 +19,7 @@ app.set("trust proxy", 1);
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   "http://localhost:3000",
-  "https://bizdigit-bd.vercel.app" // User provided backend link, though usually frontend link goes here
+  "https://bizdigit.vercel.app"
 ].filter(Boolean);
 
 app.use(
