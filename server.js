@@ -16,13 +16,33 @@ const app = express();
 app.set("trust proxy", 1);
 
 // Enable CORS + JSON body parsing for all API routes.
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:3000",
+  "https://bizdigit-bd.vercel.app" // User provided backend link, though usually frontend link goes here
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "*",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes("*")) {
+        callback(null, true);
+      } else {
+        // In production, you might want to be stricter, but for now we'll allow all if FRONTEND_URL is *
+        if (process.env.FRONTEND_URL === "*") {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
   })
 );
+
 app.use(express.json());
 
 // Quick health endpoint to confirm server status.
@@ -42,6 +62,13 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Export the app for Vercel serverless functions
+module.exports = app;
+
+// Only start the server if this file is run directly (local development)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
