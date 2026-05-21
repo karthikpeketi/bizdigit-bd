@@ -8,6 +8,7 @@ const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const contactRoutes = require("./routes/contactRoutes");
 const { notFound, errorHandler } = require("./middleware/errorHandler");
 
 connectDB();
@@ -55,6 +56,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/contact", contactRoutes);
 
 // Fallback + centralized error middleware.
 app.use(notFound);

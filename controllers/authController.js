@@ -250,7 +250,6 @@ const forgotPassword = asyncHandler(async (req, res) => {
   }
 
   const requestedEmail = email.toLowerCase().trim();
-  console.log(`[Auth] Forgot password request for: ${requestedEmail}`);
 
   const user = await User.findOne({ email: requestedEmail }).select(
     "+passwordResetOTP +passwordResetOTPExpiry"
@@ -284,7 +283,6 @@ const forgotPassword = asyncHandler(async (req, res) => {
       userId: user._id,
       otp: hashedOTP,
     });
-    console.log(`[Auth] OTP saved to database for user: ${user.email}`);
   } catch (dbError) {
     console.error(`[Auth] Failed to save OTP to database: ${dbError.message}`);
     throw new ApiError(500, "Failed to process reset request. Please try again.");
@@ -391,7 +389,6 @@ const changePassword = asyncHandler(async (req, res) => {
 // ---------------------------------------------------------------------------
 const checkEmail = asyncHandler(async (req, res) => {
   const { email } = req.body;
-  console.log(`[Auth] Checking email availability and domain: ${email}`);
 
   if (!email) {
     throw new ApiError(400, "email is required");

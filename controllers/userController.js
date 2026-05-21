@@ -84,11 +84,23 @@ const createUser = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
   const requestingRole = req.user?.role;
 
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
   // ── RBAC: Admins cannot change owner-identity fields ──────────────────
   if (requestingRole === "admin") {
-    const attemptedRestrictedFields = OWNER_ONLY_FIELDS.filter(
-      (field) => req.body[field] !== undefined
-    );
+    const attemptedRestrictedFields = OWNER_ONLY_FIELDS.filter((field) => {
+      if (req.body[field] === undefined) return false;
+      const newVal = String(req.body[field]).trim();
+      const oldVal = String(user[field] ?? "").trim();
+      if (field === "email" || field === "businessEmail") {
+        return newVal.toLowerCase() !== oldVal.toLowerCase();
+      }
+      return newVal !== oldVal;
+    });
+
     if (attemptedRestrictedFields.length > 0) {
       throw new ApiError(
         403,
@@ -126,7 +138,7 @@ const updateUser = asyncHandler(async (req, res) => {
     }
   });
 
-  const user = await User.findByIdAndUpdate(
+  const updatedUser = await User.findByIdAndUpdate(
     req.params.id,
     updatePayload,
     {
@@ -135,14 +147,10 @@ const updateUser = asyncHandler(async (req, res) => {
     }
   );
 
-  if (!user) {
-    throw new ApiError(404, "User not found");
-  }
-
   res.status(200).json({
     success: true,
     message: "Profile updated successfully",
-    data: user,
+    data: updatedUser,
   });
 });
 
