@@ -31,7 +31,5 @@ router.get("/by-user/:userId", protect, authorize("admin"), getPaymentsByUserId)
 // ── Shared routes (owner sees own, admin sees any) ────────────────────────────
 router.get("/:id", protect, authorize("owner", "admin"), getPaymentById);
 
-// Legacy alias — keep backward compat with existing frontend
-router.post("/create-payment-intent", protect, authorize("owner"), createPaymentIntent);
-
 module.exports = router;
+

@@ -41,6 +41,7 @@ const userSchema = new mongoose.Schema(
       default: function defaultStatus() {
         return this.role === "admin" ? "approved" : "pending";
       },
+      index: true,
     },
     // Login rate limiting
     loginAttempts: {

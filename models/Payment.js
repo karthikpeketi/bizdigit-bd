@@ -105,6 +105,9 @@ const paymentSchema = new mongoose.Schema(
   }
 );
 
+// Compound index for history queries: filter by userId, sort by createdAt DESC
+paymentSchema.index({ userId: 1, createdAt: -1 });
+
 // Auto-generate a unique transactionRef before saving if not set
 paymentSchema.pre("save", function (next) {
   if (!this.transactionRef) {
