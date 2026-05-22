@@ -4,6 +4,6 @@ const { protect, authorize } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.post("/", protect, authorize("owner"), chatWithAssistant);
+router.post("/", protect, authorize("owner", "admin"), chatWithAssistant);
 
 module.exports = router;

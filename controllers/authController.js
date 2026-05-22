@@ -224,6 +224,7 @@ const loginUser = asyncHandler(async (req, res) => {
         businessName: user.businessName,
         role: user.role,
         status: user.status,
+        subscription: user.subscription,
       },
     },
   });

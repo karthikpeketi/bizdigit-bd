@@ -93,6 +93,12 @@ const paymentSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    planName: {
+      type: String,
+      enum: ["Starter", "Growth", "Scale", ""],
+      default: "",
+      trim: true,
+    },
 
     // ── Audit ─────────────────────────────────────────────────────────────
     paidAt: {

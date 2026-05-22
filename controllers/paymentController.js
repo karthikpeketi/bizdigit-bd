@@ -2,6 +2,7 @@ const Stripe = require("stripe");
 const asyncHandler = require("../middleware/asyncHandler");
 const { ApiError } = require("../middleware/errorHandler");
 const Payment = require("../models/Payment");
+const User = require("../models/User");
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const getStripe = () => {
@@ -24,6 +25,7 @@ const createPaymentIntent = asyncHandler(async (req, res) => {
     description,
     paymentPurpose,
     paymentMode,
+    planName,
   } = req.body;
 
   if (!amount || Number.isNaN(Number(amount)) || Number(amount) <= 0) {
@@ -59,6 +61,7 @@ const createPaymentIntent = asyncHandler(async (req, res) => {
     description: description?.trim() || "",
     paymentPurpose: paymentPurpose?.trim() || "",
     paymentMode: paymentMode || "Stripe",
+    planName: planName || "",
     status: "pending",
     stripePaymentIntentId: paymentIntent.id,
   });
@@ -116,6 +119,21 @@ const confirmPayment = asyncHandler(async (req, res) => {
 
   await payment.save();
 
+  // Activate subscription if successful
+  if (payment.status === "success" && (payment.paymentPurpose === "Service Subscription" || payment.planName)) {
+    const user = await User.findById(payment.userId);
+    if (user) {
+      user.subscription = {
+        plan: payment.planName || "Free",
+        status: "active",
+        startDate: new Date(),
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days active
+        paymentId: payment._id,
+      };
+      await user.save();
+    }
+  }
+
   res.status(200).json({
     success: true,
     message: `Payment ${payment.status === "success" ? "confirmed successfully" : "failed"}`,
@@ -136,6 +154,7 @@ const simulatePayment = asyncHandler(async (req, res) => {
     description,
     paymentPurpose,
     paymentMode,
+    planName,
     simulateFailure = false,
   } = req.body;
 
@@ -169,9 +188,25 @@ const simulatePayment = asyncHandler(async (req, res) => {
     description: description?.trim() || "",
     paymentPurpose: paymentPurpose?.trim() || "",
     paymentMode,
+    planName: planName || "",
     status,
     paidAt: status === "success" ? new Date() : null,
   });
+
+  // Activate subscription if successful
+  if (status === "success" && (paymentPurpose === "Service Subscription" || planName)) {
+    const user = await User.findById(req.user._id);
+    if (user) {
+      user.subscription = {
+        plan: planName || "Free",
+        status: "active",
+        startDate: new Date(),
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days active
+        paymentId: payment._id,
+      };
+      await user.save();
+    }
+  }
 
   res.status(200).json({
     success: true,
