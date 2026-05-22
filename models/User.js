@@ -119,6 +119,32 @@ const userSchema = new mongoose.Schema(
       enum: ["", "Low", "Medium", "High"],
       default: "",
     },
+    // ── Subscription Details ──────────────────────────────────────────────
+    subscription: {
+      plan: {
+        type: String,
+        enum: ["Free", "Starter", "Growth", "Scale"],
+        default: "Free",
+      },
+      status: {
+        type: String,
+        enum: ["active", "expired", "cancelled", "none"],
+        default: "active",
+      },
+      startDate: {
+        type: Date,
+        default: Date.now,
+      },
+      expiresAt: {
+        type: Date,
+        default: null,
+      },
+      paymentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Payment",
+        default: null,
+      },
+    },
   },
   {
     timestamps: { createdAt: "createdAt", updatedAt: false },
