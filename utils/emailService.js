@@ -131,7 +131,7 @@ const sendContactFormSubmissionEmail = async ({ name, email, company, message })
       </table>
     `,
     buttonText: "View Contact Page",
-    buttonUrl: `${process.env.FRONTEND_URL || "http://localhost:3000"}/contact#contact-form`,
+    buttonUrl: `${process.env.FRONTEND_URL || "https://bizdigit.vercel.app" || "http://localhost:3000"}/contact#contact-form`,
     footerNote: "This notification is sent to the BizDigit support team whenever a new enquiry is received.",
   });
 
@@ -172,7 +172,7 @@ const sendRegistrationNotificationToAdmin = async (user) => {
       </table>
     `,
     buttonText: "Go to Admin Dashboard",
-    buttonUrl: `${process.env.FRONTEND_URL || "http://localhost:3000"}/admin`,
+    buttonUrl: `${process.env.FRONTEND_URL || "https://bizdigit.vercel.app" || "http://localhost:3000"}/admin`,
     footerNote: "Approve or reject the registration from the Admin Dashboard.",
   });
 
@@ -204,7 +204,7 @@ const sendApprovalEmail = async (user) => {
       </div>
     `,
     buttonText: "Login to Your Account",
-    buttonUrl: `${process.env.FRONTEND_URL || "http://localhost:3000"}/login`,
+    buttonUrl: `${process.env.FRONTEND_URL || "https://bizdigit.vercel.app" || "http://localhost:3000"}/login`,
     footerNote: "Welcome to BizDigit — your UK business digital partner.",
   });
 
@@ -238,7 +238,7 @@ const sendRejectionEmail = async (user) => {
       </p>
     `,
     buttonText: "Contact Support",
-    buttonUrl: `${process.env.FRONTEND_URL || "http://localhost:3000"}/contact`,
+    buttonUrl: `${process.env.FRONTEND_URL || "https://bizdigit.vercel.app" || "http://localhost:3000"}/contact`,
     footerNote: "We’re here to help with next steps if you want to reapply.",
   });
 
